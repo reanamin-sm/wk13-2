@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>신나는 영어 발음 & 리듬 놀이터 🎈</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@700;800;900&display=swap');
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #FFF6D6 0%, #FFE2E2 50%, #D9F2FF 100%);
+      --card-bg: #FFFFFF;
+      --primary: #FF6B6B;
+      --primary-shadow: #D94848;
+      --secondary: #4ECDC4;
+      --secondary-shadow: #35A39B;
+      --accent: #FFE66D;
+      --accent-shadow: #E0C236;
+      --purple: #845EC2;
+      --purple-shadow: #624199;
+      --text-main: #2F3542;
+      --text-sub: #57606F;
+      --success: #2ED573;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 14px;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      font-family: 'Jua', sans-serif;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card-bg);
+      border-radius: 32px;
+      padding: 20px 22px;
+      box-shadow: 0 16px 36px rgba(47, 53, 66, 0.13);
+      border: 6px solid #FFFFFF;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 상단 헤더 및 연속 학습/별점 보드 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .title-badge {
+      background: #FFF0F0;
+      color: var(--primary);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stats-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .stat-pill {
+      background: #FFF9DB;
+      border: 2.5px solid var(--accent);
+      padding: 5px 12px;
+      border-radius: 18px;
+      font-size: 1.05rem;
+      color: #D98200;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stat-pill.streak {
+      background: #FFF0F6;
+      border-color: #FF85C0;
+      color: #C41D7F;
+    }
+
+    .stat-pill.bump {
+      transform: scale(1.25);
+    }
+
+    /* 오늘의 미션 진행 바 */
+    .mission-bar-wrap {
+      background: #F1F2F6;
+      border-radius: 16px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .mission-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 12px;
+      background: #DFE4EA;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4ECDC4, #2ED573);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    /* 학습 모드 전환 (단어 모드 vs 리듬 문장 모드) */
+    .mode-switcher {
+      display: flex;
+      background: #F1F2F6;
+      padding: 5px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'Jua', sans-serif;
+      font-size: 1.05rem;
+      padding: 9px 8px;
+      border-radius: 15px;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #FFFFFF;
+      color: var(--purple);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 카테고리 탭 */
+    .category-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 3px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: #F1F2F6;
+      color: var(--text-sub);
+      font-family: 'Jua', sans-serif;
+      font-size: 0.95rem;
+      padding: 8px 6px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--secondary);
+      color: white;
+      box-shadow: 0 3px 0 var(--secondary-shadow);
+      transform: translateY(-1px);
+    }
+
+    /* 학습 카드 영역 */
+    .word-card {
+      background: #F8FAFC;
+      border: 4px dashed #DCE4EC;
+      border-radius: 26px;
+      padding: 18px 14px;
+      text-align: center;
+      margin-bottom: 14px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .word-card.correct-glow {
+      background: #E8FFF1;
+      border: 4px solid var(--success);
+      animation: bounceCard 0.5s ease;
+    }
+
+    @keyframes bounceCard {
+      0%, 100% { transform: scale(1); }
+      40% { transform: scale(1.03); }
+      70% { transform: scale(0.98); }
+    }
+
+    .card-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 6px;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #DFE4EA;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: var(--primary);
+      transform: scale(1.25);
+    }
+
+    .dot.done {
+      background: var(--success);
+    }
+
+    /* 반복 연습 횟수 뱃지 (3단계 마스터리) */
+    .rep-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #FFFFFF;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      border: 1.5px solid #E2E8F0;
+    }
+
+    .rep-heart {
+      font-size: 0.95rem;
+      opacity: 0.25;
+      transition: all 0.3s;
+    }
+
+    .rep-heart.filled {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+
+    .emoji-display {
+      font-size: 4.2rem;
+      line-height: 1.1;
+      margin: 4px 0;
+      filter: drop-shadow(0 5px 6px rgba(0,0,0,0.08));
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    /* 강세 음절 시각화 블록 */
+    .stress-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 8px;
+      min-height: 68px;
+    }
+
+    .syllable-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 6px 12px;
+      border-radius: 16px;
+      background: #EDF2F7;
+      color: #4A5568;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-bottom: 4px solid #CBD5E0;
+    }
+
+    /* 강세(Stress)가 들어가는 음절 강조 */
+    .syllable-box.stressed {
+      background: #FFF0F0;
+      color: var(--primary);
+      font-size: 2rem;
+      font-weight: 900;
+      padding: 8px 16px;
+      border: 2.5px solid #FFB8B8;
+      border-bottom: 6px solid var(--primary);
+    }
+
+    .syllable-box.active-beat {
+      transform: translateY(-10px) scale(1.12);
+      background: var(--accent) !important;
+      color: #5C4900 !important;
+      border-color: var(--accent-shadow) !important;
+      box-shadow: 0 8px 16px rgba(255, 230, 109, 0.6);
+    }
+
+    .stress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CBD5E0;
+      margin-bottom: 4px;
+    }
+
+    .syllable-box.stressed .stress-dot {
+      width: 13px;
+      height: 13px;
+      background: var(--primary);
+    }
+
+    /* 억양(Intonation) 곡선 SVG 영역 */
+    .intonation-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 4px auto 8px;
+      background: #FFFFFF;
+      padding: 5px 14px;
+      border-radius: 16px;
+      width: fit-content;
+      border: 1.5px solid #E2E8F0;
+    }
+
+    .intonation-label {
+      font-size: 0.9rem;
+      color: var(--purple);
+    }
+
+    .phonics-hint {
+      font-size: 1rem;
+      color: #8395A7;
+      margin-bottom: 4px;
+    }
+
+    .korean-meaning {
+      display: inline-block;
+      background: #FFFFFF;
+      padding: 5px 16px;
+      border-radius: 18px;
+      font-size: 1.15rem;
+      color: var(--text-sub);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* 듣기 & 리듬 박수 버튼 그룹 */
+    .listen-controls {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1.2fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-3d {
+      border: none;
+      border-radius: 18px;
+      font-family: 'Jua', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.12s;
+    }
+
+    .btn-3d:active {
+      transform: translateY(3px);
+    }
+
+    .btn-listen {
+      background: var(--accent);
+      color: #5C4900;
+      font-size: 1.1rem;
+      padding: 13px 8px;
+      box-shadow: 0 5px 0 var(--accent-shadow);
+    }
+
+    .btn-slow {
+      background: #E2F1FF;
+      color: #1E6BB8;
+      font-size: 1.05rem;
+      padding: 13px 6px;
+      box-shadow: 0 5px 0 #B3D7FF;
+    }
+
+    .btn-rhythm {
+      background: #F3E8FF;
+      color: var(--purple);
+      font-size: 1.05rem;
+      padding: 13px 8px;
+      box-shadow: 0 5px 0 #D6BCFA;
+    }
+
+    /* 마이크 및 실시간 목소리 파동 */
+    .mic-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .btn-mic {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      font-size: 1.35rem;
+      padding: 15px;
+      border-radius: 22px;
+      box-shadow: 0 6px 0 var(--primary-shadow);
+    }
+
+    .btn-mic.listening {
+      background: #FF4757;
+      animation: pulseMic 1.2s infinite;
+    }
+
+    @keyframes pulseMic {
+      0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.6), 0 6px 0 var(--primary-shadow); }
+      70% { box-shadow: 0 0 0 16px rgba(255, 71, 87, 0), 0 6px 0 var(--primary-shadow); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0), 0 6px 0 var(--primary-shadow); }
+    }
+
+    /* 실시간 목소리 크기/리듬 바 */
+    .voice-meter {
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      height: 28px;
+      width: 100%;
+      background: #FFF5F5;
+      border-radius: 12px;
+      padding: 4px 12px;
+    }
+
+    .voice-meter.active {
+      display: flex;
+    }
+
+    .meter-bar {
+      width: 8px;
+      height: 6px;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: height 0.08s ease;
+    }
+
+    /* 피드백 및 억양/강세 리포트 */
+    .feedback-box {
+      min-height: 74px;
+      background: #F1F2F6;
+      border-radius: 18px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-bottom: 14px;
+      transition: all 0.3s;
+    }
+
+    .feedback-box.success {
+      background: #D4F8E2;
+      color: #167A40;
+    }
+
+    .feedback-box.retry {
+      background: #FFF3CD;
+      color: #856404;
+    }
+
+    .feedback-main {
+      font-size: 1.15rem;
+      margin-bottom: 3px;
+    }
+
+    .feedback-sub {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-family: 'Nunito', 'Jua', sans-serif;
+    }
+
+    /* 하단 반복 루프 및 네비게이션 */
+    .bottom-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav {
+      flex: 1;
+      background: #F1F2F6;
+      color: var(--text-main);
+      font-size: 1.05rem;
+      padding: 12px 8px;
+      border-radius: 16px;
+      box-shadow: 0 4px 0 #CED6E0;
+    }
+
+    .btn-next-highlight {
+      background: var(--secondary);
+      color: white;
+      box-shadow: 0 4px 0 var(--secondary-shadow);
+    }
+
+    .btn-auto-loop {
+      background: #EDF2F7;
+      color: #4A5568;
+      font-size: 0.95rem;
+      padding: 12px 10px;
+      border-radius: 16px;
+      box-shadow: 0 4px 0 #CBD5E0;
+    }
+
+    .btn-auto-loop.on {
+      background: #FF9F43;
+      color: white;
+      box-shadow: 0 4px 0 #E58E26;
+    }
+
+    .warning-banner {
+      display: none;
+      background: #FFEAA7;
+      color: #6C5CE7;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    /* 폭죽 파티클 */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      pointer-events: none;
+      animation: fall 1.2s ease-out forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translateY(240px) rotate(540deg) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container" id="appCard">
+    <!-- 상단 헤더: 제목, 연속 학습일, 별점 -->
+    <div class="header">
+      <div class="title-badge">🎈 영어 리듬 & 발음 놀이터</div>
+      <div class="stats-group">
+        <div class="stat-pill streak" id="streakPill" title="연속 학습일">🔥 <span id="streakCount">1</span>일째</div>
+        <div class="stat-pill" id="starCounter" title="모은 별">⭐ <span id="starCount">0</span></div>
+      </div>
+    </div>
+
+    <!-- 오늘의 반복 미션 게이지 -->
+    <div class="mission-bar-wrap">
+      <div class="mission-text" id="missionText">🎯 오늘의 목표: 0 / 10번 성공</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="missionFill"></div>
+      </div>
+    </div>
+
+    <div class="warning-banner" id="browserWarning">
+      ⚠️ 크롬(Chrome)이나 엣지(Edge) 브라우저를 사용하면 마이크 발음 연습이 더 정확하게 작동해요!
+    </div>
+
+    <!-- 학습 모드 선택: 단어 강세 연습 vs 문장 리듬·억양 연습 -->
+    <div class="mode-switcher">
+      <button class="mode-btn active" data-mode="words">🔤 단어 강세 톡톡</button>
+      <button class="mode-btn" data-mode="sentences">🎵 문장 리듬·억양 랄랄라</button>
+    </div>
+
+    <!-- 주제 선택 탭 -->
+    <div class="category-tabs" id="categoryTabs"></div>
+
+    <!-- 학습 카드 -->
+    <div class="word-card" id="wordCard">
+      <div class="card-top-bar">
+        <div class="progress-dots" id="progressDots"></div>
+        <div class="rep-badge" id="repBadge" title="3번 성공하면 왕관 완성!">
+          <span>반복:</span>
+          <span class="rep-heart">❤️</span>
+          <span class="rep-heart">❤️</span>
+          <span class="rep-heart">❤️</span>
+        </div>
+      </div>
+
+      <div class="emoji-display" id="emojiDisplay" title="그림을 눌러 소리 듣기">🐘</div>
+
+      <!-- 음절별 강세 블록 시각화 -->
+      <div class="stress-container" id="stressContainer"></div>
+
+      <!-- 억양 곡선 안내 -->
+      <div class="intonation-wrap" id="intonationWrap">
+        <svg id="intonationSvg" width="76" height="26" viewBox="0 0 76 26"></svg>
+        <span class="intonation-label" id="intonationLabel">끝을 내려서 말해요 ↘️</span>
+      </div>
+
+      <div class="phonics-hint" id="phonicsHint">[ 엘 - 리 - 펀트 ]</div>
+      <div class="korean-meaning" id="koreanMeaning">코끼리</div>
+    </div>
+
+    <!-- 듣기 / 천천히 / 리듬 박수 버튼 -->
+    <div class="listen-controls">
+      <button class="btn-3d btn-listen" id="btnListen">🔊 들어보기</button>
+      <button class="btn-3d btn-slow" id="btnSlow">🐢 천천히</button>
+      <button class="btn-3d btn-rhythm" id="btnRhythm">👏 리듬 박수</button>
+    </div>
+
+    <!-- 따라 말하기 마이크 및 실시간 파동 -->
+    <div class="mic-section">
+      <button class="btn-3d btn-mic" id="btnMic">🎤 눌러서 따라 말하기</button>
+      <div class="voice-meter" id="voiceMeter">
+        <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+        <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+        <div class="meter-bar"></div><div class="meter-bar"></div><div class="meter-bar"></div>
+        <div class="meter-bar"></div>
+      </div>
+    </div>
+
+    <!-- 피드백 창 -->
+    <div class="feedback-box" id="feedbackBox">
+      <div class="feedback-main" id="feedbackMain">👏 '리듬 박수'나 '들어보기'를 먼저 눌러 볼까요?</div>
+      <div class="feedback-sub" id="feedbackSub">큰 글자 부분은 더 크고 힘차게 발음해요!</div>
+    </div>
+
+    <!-- 이전 / 자동반복 / 다음 컨트롤 -->
+    <div class="bottom-controls">
+      <button class="btn-3d btn-nav" id="btnPrev">⬅️ 이전</button>
+      <button class="btn-3d btn-auto-loop" id="btnAutoLoop" title="성공하면 자동으로 다음 문제로 넘어가요">🔁 연속연습 OFF</button>
+      <button class="btn-3d btn-nav" id="btnNext">다음 ➡️</button>
+    </div>
+  </div>
+
+  <script>
+    // 학습 데이터: 음절 분리(syllables), 강세 위치(stress: 1=강함, 0=약함), 억양(intonation: 'fall' | 'rise' | 'wave')
+    const learningData = {
+      words: {
+        animals: {
+          label: "🐶 동물 친구",
+          items: [
+            { text: "Elephant", syllables: ["EL", "e", "phant"], stress: [1, 0, 0], intonation: "fall", hint: "엘(강하게) - 리 - 펀트", meaning: "코끼리", emoji: "🐘", alts: ["elephant", "elephants"] },
+            { text: "Rabbit", syllables: ["RAB", "bit"], stress: [1, 0], intonation: "fall", hint: "래(강하게) - 빗", meaning: "토끼", emoji: "🐰", alts: ["rabbit", "rabbits"] },
+            { text: "Kangaroo", syllables: ["kan", "ga", "ROO"], stress: [0, 0, 1], intonation: "fall", hint: "캥 - 거 - 루(강하게)", meaning: "캥거루", emoji: "🦘", alts: ["kangaroo", "kangaroos"] },
+            { text: "Monkey", syllables: ["MON", "key"], stress: [1, 0], intonation: "fall", hint: "멍(강하게) - 키", meaning: "원숭이", emoji: "🐵", alts: ["monkey", "monkeys"] },
+            { text: "Giraffe", syllables: ["gi", "RAFFE"], stress: [0, 1], intonation: "fall", hint: "지 - 래프(강하게)", meaning: "기린", emoji: "🦒", alts: ["giraffe", "giraffes"] }
+          ]
+        },
+        fruits: {
+          label: "🍎 맛있는 과일",
+          items: [
+            { text: "Banana", syllables: ["ba", "NA", "na"], stress: [0, 1, 0], intonation: "fall", hint: "버 - 내(강하게) - 너", meaning: "바나나", emoji: "🍌", alts: ["banana", "bananas"] },
+            { text: "Apple", syllables: ["AP", "ple"], stress: [1, 0], intonation: "fall", hint: "애(강하게) - 플", meaning: "사과", emoji: "🍎", alts: ["apple", "apples"] },
+            { text: "Strawberry", syllables: ["STRAW", "ber", "ry"], stress: [1, 0, 0], intonation: "fall", hint: "스트로(강하게) - 베 - 리", meaning: "딸기", emoji: "🍓", alts: ["strawberry", "strawberries"] },
+            { text: "Tomato", syllables: ["to", "MA", "to"], stress: [0, 1, 0], intonation: "fall", hint: "터 - 메이(강하게) - 토", meaning: "토마토", emoji: "🍅", alts: ["tomato", "tomatoes"] },
+            { text: "Watermelon", syllables: ["WA", "ter", "mel", "on"], stress: [1, 0, 1, 0], intonation: "fall", hint: "워(강하게) - 터 - 멜(강하게) - 런", meaning: "수박", emoji: "🍉", alts: ["watermelon", "watermelons"] }
+          ]
+        },
+        things: {
+          label: "🚀 재미난 사물",
+          items: [
+            { text: "Computer", syllables: ["com", "PU", "ter"], stress: [0, 1, 0], intonation: "fall", hint: "컴 - 퓨(강하게) - 터", meaning: "컴퓨터", emoji: "💻", alts: ["computer", "computers"] },
+            { text: "Umbrella", syllables: ["um", "BREL", "la"], stress: [0, 1, 0], intonation: "fall", hint: "엄 - 브렐(강하게) - 러", meaning: "우산", emoji: "☂️", alts: ["umbrella", "umbrellas"] },
+            { text: "Piano", syllables: ["pi", "AN", "o"], stress: [0, 1, 0], intonation: "fall", hint: "피 - 애(강하게) - 노", meaning: "피아노", emoji: "🎹", alts: ["piano", "pianos"] },
+            { text: "Helicopter", syllables: ["HEL", "i", "cop", "ter"], stress: [1, 0, 0, 0], intonation: "fall", hint: "헬(강하게) - 리 - 콥 - 터", meaning: "헬리콥터", emoji: "🚁", alts: ["helicopter", "helicopters"] },
+            { text: "Robot", syllables: ["RO", "bot"], stress: [1, 0], intonation: "fall", hint: "로(강하게) - 봇", meaning: "로봇", emoji: "🤖", alts: ["robot", "robots"] }
+          ]
+        }
+      },
+      sentences: {
+        greetings: {
+          label: "👋 반가운 인사",
+          items: [
+            { text: "How are you?", syllables: ["HOW", "are", "YOU?"], stress: [1, 0, 1], intonation: "fall", hint: "하우(강) - 아 - 유(강↘)", meaning: "어떻게 지내?", emoji: "😊", alts: ["how are you"] },
+            { text: "Are you happy?", syllables: ["Are", "you", "HAP", "py?"], stress: [0, 0, 1, 0], intonation: "rise", hint: "아 - 유 - 해(강) - 피↗?", meaning: "너 행복하니? (끝을 올려요!)", emoji: "😄", alts: ["are you happy"] },
+            { text: "Nice to meet you!", syllables: ["NICE", "to", "MEET", "you!"], stress: [1, 0, 1, 0], intonation: "fall", hint: "나이스(강) - 투 - 밋(강) - 유↘", meaning: "만나서 반가워!", emoji: "🤝", alts: ["nice to meet you"] },
+            { text: "Good morning!", syllables: ["Good", "MOR", "ning!"], stress: [0, 1, 0], intonation: "wave", hint: "굿 - 모(강) - 닝~", meaning: "좋은 아침이야!", emoji: "☀️", alts: ["good morning"] }
+          ]
+        },
+        questions: {
+          label: "❓ 궁금한 질문",
+          items: [
+            { text: "What is this?", syllables: ["WHAT", "is", "THIS?"], stress: [1, 0, 1], intonation: "fall", hint: "왓(강) - 이즈 - 디스(강↘)", meaning: "이것은 무엇인가요?", emoji: "🎁", alts: ["what is this", "whats this"] },
+            { text: "Do you like apples?", syllables: ["Do", "you", "LIKE", "AP", "ples?"], stress: [0, 0, 1, 1, 0], intonation: "rise", hint: "두 - 유 - 라이크(강) - 애(강) - 플즈↗?", meaning: "사과 좋아하니? (끝을 올려요!)", emoji: "🍎", alts: ["do you like apples", "do you like apple"] },
+            { text: "Can you swim?", syllables: ["Can", "you", "SWIM?"], stress: [0, 0, 1], intonation: "rise", hint: "캔 - 유 - 스윔(강↗)?", meaning: "수영할 수 있니? (끝을 올려요!)", emoji: "🏊", alts: ["can you swim"] },
+            { text: "I love pizza!", syllables: ["I", "LOVE", "PIZ", "za!"], stress: [0, 1, 1, 0], intonation: "fall", hint: "아이 - 러브(강) - 피(강) - 자↘!", meaning: "나는 피자를 정말 좋아해!", emoji: "🍕", alts: ["i love pizza"] }
+          ]
+        },
+        chant: {
+          label: "🎶 리듬 챈트",
+          items: [
+            { text: "Clap your hands!", syllables: ["CLAP", "your", "HANDS!"], stress: [1, 0, 1], intonation: "fall", hint: "클랩(짝!) - 유어 - 핸즈(짝!)", meaning: "손뼉을 쳐요!", emoji: "👏", alts: ["clap your hands"] },
+            { text: "Jump up high!", syllables: ["JUMP", "up", "HIGH!"], stress: [1, 0, 1], intonation: "rise", hint: "점프(강) - 업 - 하이(높게↗)!", meaning: "높이 뛰어올라요!", emoji: "🦘", alts: ["jump up high"] },
+            { text: "Look at the star!", syllables: ["LOOK", "at", "the", "STAR!"], stress: [1, 0, 0, 1], intonation: "fall", hint: "룩(강) - 앳 - 더 - 스타(강↘)!", meaning: "저 별을 보세요!", emoji: "⭐", alts: ["look at the star", "look at the stars"] },
+            { text: "You are great!", syllables: ["YOU", "are", "GREAT!"], stress: [1, 0, 1], intonation: "wave", hint: "유(강) - 아 - 그레이트(강~)!", meaning: "넌 정말 멋져!", emoji: "🏆", alts: ["you are great", "youre great"] }
+          ]
+        }
+      }
+    };
+
+    // 로컬 스토리지 기반 지속 학습 데이터 불러오기
+    const STORAGE_KEY = "kids_english_rhythm_v1";
+    let savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+
+    const todayStr = new Date().toDateString();
+    if (!savedState) {
+      savedState = {
+        stars: 0,
+        streak: 1,
+        lastDate: todayStr,
+        todaySuccess: 0,
+        mastery: {} // "mode-cat-idx": count (0~3)
+      };
+    } else {
+      // 날짜가 바뀌었으면 연속 학습일 갱신 및 오늘 목표 초기화
+      if (savedState.lastDate !== todayStr) {
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
+        savedState.streak = (savedState.lastDate === yesterday) ? savedState.streak + 1 : 1;
+        savedState.todaySuccess = 0;
+        savedState.lastDate = todayStr;
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState));
+    }
+
+    // 현재 세션 상태
+    let currentMode = "words";
+    let currentCategory = "animals";
+    let currentIndex = 0;
+    let isListening = false;
+    let autoLoop = false;
+    let recognition = null;
+    let audioContext = null;
+    let analyser = null;
+    let micStream = null;
+    let meterAnimId = null;
+
+    // DOM 요소
+    const categoryTabs = document.getElementById("categoryTabs");
+    const emojiDisplay = document.getElementById("emojiDisplay");
+    const stressContainer = document.getElementById("stressContainer");
+    const intonationSvg = document.getElementById("intonationSvg");
+    const intonationLabel = document.getElementById("intonationLabel");
+    const phonicsHint = document.getElementById("phonicsHint");
+    const koreanMeaning = document.getElementById("koreanMeaning");
+    const progressDots = document.getElementById("progressDots");
+    const repBadge = document.getElementById("repBadge");
+    const starCountEl = document.getElementById("starCount");
+    const starCounterEl = document.getElementById("starCounter");
+    const streakCountEl = document.getElementById("streakCount");
+    const missionText = document.getElementById("missionText");
+    const missionFill = document.getElementById("missionFill");
+    const wordCard = document.getElementById("wordCard");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackMain = document.getElementById("feedbackMain");
+    const feedbackSub = document.getElementById("feedbackSub");
+    const btnListen = document.getElementById("btnListen");
+    const btnSlow = document.getElementById("btnSlow");
+    const btnRhythm = document.getElementById("btnRhythm");
+    const btnMic = document.getElementById("btnMic");
+    const voiceMeter = document.getElementById("voiceMeter");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnAutoLoop = document.getElementById("btnAutoLoop");
+
+    function getAudioCtx() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === "suspended") audioContext.resume();
+      return audioContext;
+    }
+
+    // 효과음 (성공, 재시도, 박수 리듬 비트)
+    function playTone(freq, duration = 0.15, type = "triangle", volume = 0.25) {
+      const ctx = getAudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(volume, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    }
+
+    function playSuccessFanfare() {
+      const ctx = getAudioCtx();
+      const notes = [523.25, 659.25, 783.99, 1046.5];
+      notes.forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.22, "triangle", 0.25), i * 110);
+      });
+    }
+
+    // 리듬 박수 & 강세 애니메이션 재생 (학습자가 강세와 박자를 체감하도록 유도)
+    function playRhythmGuide() {
+      window.speechSynthesis.cancel();
+      const item = getCurrentItem();
+      const boxes = document.querySelectorAll(".syllable-box");
+      const beatInterval = 420; // ms
+
+      item.syllables.forEach((_, idx) => {
+        setTimeout(() => {
+          boxes.forEach(b => b.classList.remove("active-beat"));
+          if (boxes[idx]) boxes[idx].classList.add("active-beat");
+
+          const isStressed = item.stress[idx] === 1;
+          // 강세 음절은 높고 경쾌한 큰 북소리, 약세 음절은 작고 낮은 소리
+          playTone(isStressed ? 587.33 : 329.63, isStressed ? 0.2 : 0.12, "sine", isStressed ? 0.35 : 0.14);
+        }, idx * beatInterval);
+      });
+
+      // 박수 리듬 직후 원어민 발음 자동 연결
+      setTimeout(() => {
+        boxes.forEach(b => b.classList.remove("active-beat"));
+        speakItem(0.92);
+      }, item.syllables.length * beatInterval + 220);
+    }
+
+    // 원어민 발음 재생 + 음절별 하이라이트 동기화
+    function speakItem(rate = 0.92) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+
+      const item = getCurrentItem();
+      const utterance = new SpeechSynthesisUtterance(item.text);
+      utterance.lang = "en-US";
+      utterance.rate = rate;
+      utterance.pitch = 1.12;
+
+      const voices = window.speechSynthesis.getVoices();
+      const enVoice = voices.find(v => v.lang === "en-US" && v.name.includes("Google")) ||
+                      voices.find(v => v.lang.startsWith("en"));
+      if (enVoice) utterance.voice = enVoice;
+
+      // 음절 하이라이트 애니메이션
+      const boxes = document.querySelectorAll(".syllable-box");
+      const stepTime = (rate < 0.8 ? 480 : 320);
+      item.syllables.forEach((_, idx) => {
+        setTimeout(() => {
+          boxes.forEach(b => b.classList.remove("active-beat"));
+          if (boxes[idx]) boxes[idx].classList.add("active-beat");
+        }, idx * stepTime);
+      });
+
+      utterance.onend = () => {
+        boxes.forEach(b => b.classList.remove("active-beat"));
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // 실시간 마이크 볼륨 시각화 (강세/억양 크기 피드백용)
+    let peakVolumes = [];
+    async function startVoiceMeter() {
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const ctx = getAudioCtx();
+        const source = ctx.createMediaStreamSource(micStream);
+        analyser = ctx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const bars = document.querySelectorAll(".meter-bar");
+        peakVolumes = [];
+        voiceMeter.classList.add("active");
+
+        function updateMeter() {
+          if (!isListening) return;
+          analyser.getByteFrequencyData(dataArray);
+          const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+          if (avg > 12) peakVolumes.push(avg);
+
+          bars.forEach((bar, idx) => {
+            const val = dataArray[idx % dataArray.length] || 0;
+            const h = Math.max(6, Math.min(24, (val / 255) * 32));
+            bar.style.height = h + "px";
+          });
+          meterAnimId = requestAnimationFrame(updateMeter);
+        }
+        updateMeter();
+      } catch (e) {
+        // 볼륨 미터 실패 시 음성 인식만 단독 진행
+      }
+    }
+
+    function stopVoiceMeter() {
+      voiceMeter.classList.remove("active");
+      if (meterAnimId) cancelAnimationFrame(meterAnimId);
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }
+    }
+
+    // 음성 인식 초기화
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        document.getElementById("browserWarning").style.display = "block";
+        btnMic.disabled = true;
+        btnMic.textContent = "🎤 음성 인식을 지원하지 않는 브라우저예요";
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 5;
+
+      recognition.onstart = () => {
+        isListening = true;
+        btnMic.classList.add("listening");
+        btnMic.textContent = "👂 듣고 있어요! 리듬에 맞춰 말해 보세요...";
+        setFeedback("normal", "말하는 중... 🎙️", "큰 글자는 힘차게, 끝 억양도 살려서 말해 보세요!");
+        startVoiceMeter();
+      };
+
+      recognition.onresult = (event) => {
+        const results = Array.from(event.results[0]).map(r =>
+          r.transcript.toLowerCase().replace(/[^a-z\s]/g, "").trim()
+        );
+        const rawText = event.results[0][0].transcript;
+        evaluateSpeech(results, rawText);
+      };
+
+      recognition.onerror = (event) => {
+        isListening = false;
+        stopVoiceMeter();
+        resetMicButton();
+        if (event.error === "no-speech") {
+          setFeedback("retry", "목소리가 잘 안 들렸어요! 🙉", "마이크 버튼을 다시 누르고 조금 더 크게 말해 볼까요?");
+        } else if (event.error === "not-allowed") {
+          setFeedback("retry", "마이크 권한을 허용해 주세요! 🔒", "주소창 왼쪽 자물쇠/마이크 아이콘을 눌러 허용해 주세요.");
+        } else {
+          setFeedback("retry", "다시 한 번 도전해 볼까요? 😊", "버튼을 누르고 천천히 따라 말해 보세요.");
+        }
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        stopVoiceMeter();
+        resetMicButton();
+      };
+    }
+
+    function resetMicButton() {
+      btnMic.classList.remove("listening");
+      btnMic.textContent = "🎤 눌러서 따라 말하기";
+    }
+
+    // 발음 + 강세·억양 에너지 종합 판정
+    function evaluateSpeech(candidates, rawText) {
+      const item = getCurrentItem();
+      const targetClean = item.text.toLowerCase().replace(/[^a-z\s]/g, "").trim();
+      const validSet = new Set([targetClean, ...item.alts]);
+
+      const isMatch = candidates.some(spoken => {
+        if (validSet.has(spoken)) return true;
+        const maxErr = targetClean.length >= 8 ? 3 : (targetClean.length >= 5 ? 2 : 1);
+        return levenshteinDistance(spoken, targetClean) <= maxErr;
+      });
+
+      if (isMatch) {
+        playSuccessFanfare();
+        wordCard.classList.add("correct-glow");
+        btnNext.classList.add("btn-next-highlight");
+        spawnConfetti();
+
+        // 강세/에너지 분석 피드백 생성
+        const maxVol = peakVolumes.length ? Math.max(...peakVolumes) : 50;
+        const minVol = peakVolumes.length ? Math.min(...peakVolumes) : 30;
+        const dynamicRange = maxVol - minVol;
+
+        let rhythmComment = "강세와 리듬이 정말 자연스러워요! 🎵";
+        if (item.intonation === "rise") {
+          rhythmComment = "질문 억양처럼 끝을 경쾌하게 잘 살렸어요! ↗️";
+        } else if (dynamicRange > 22) {
+          rhythmComment = "강한 부분과 약한 부분의 리듬 차이가 아주 훌륭해요! 👏";
+        }
+
+        // 반복 마스터리 카운트 증가 (최대 3하트)
+        const key = getMasteryKey();
+        const prevCount = savedState.mastery[key] || 0;
+        const newCount = Math.min(3, prevCount + 1);
+        savedState.mastery[key] = newCount;
+
+        savedState.stars += 1;
+        savedState.todaySuccess += 1;
+        saveProgress();
+
+        updateStatsUI();
+        renderRepetitionHearts();
+        renderDots();
+
+        const extraMsg = newCount === 3
+          ? "👑 3번 반복 마스터 완성! 완벽해요!"
+          : `반복 연습 ${newCount}/3번 성공! (3번 채우면 왕관 획득!)`;
+
+        setFeedback(
+          "success",
+          `참 잘했어요! ${rhythmComment}`,
+          `들린 발음: "${rawText}" · ${extraMsg}`
+        );
+
+        // 연속 연습 모드(Auto-loop)가 켜져 있으면 1.8초 후 자동으로 다음 문제 이동
+        if (autoLoop) {
+          setTimeout(() => {
+            goNextItem();
+          }, 1850);
+        }
+      } else {
+        playTone(300, 0.25, "sine", 0.2);
+        setFeedback(
+          "retry",
+          `조금만 더 힘내요! 다시 따라 해 볼까요? 💪`,
+          `들린 소리: "${rawText}" → 👏 '리듬 박수'를 듣고 박자에 맞춰 말해 보세요!`
+        );
+      }
+    }
+
+    function levenshteinDistance(a, b) {
+      if (!a || !b) return 99;
+      const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          matrix[i][j] = b[i - 1] === a[j - 1]
+            ? matrix[i - 1][j - 1]
+            : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+        }
+      }
+      return matrix[b.length][a.length];
+    }
+
+    function spawnConfetti() {
+      const colors = ["#FF6B6B", "#4ECDC4", "#FFE66D", "#A29BFE", "#55EFC4"];
+      const container = document.getElementById("appCard");
+      for (let i = 0; i < 24; i++) {
+        const conf = document.createElement("div");
+        conf.className = "confetti";
+        conf.style.left = Math.random() * 90 + 5 + "%";
+        conf.style.top = "30%";
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDelay = Math.random() * 0.2 + "s";
+        container.appendChild(conf);
+        setTimeout(() => conf.remove(), 1400);
+      }
+    }
+
+    function setFeedback(type, mainText, subText) {
+      feedbackBox.className = "feedback-box";
+      if (type === "success") feedbackBox.classList.add("success");
+      if (type === "retry") feedbackBox.classList.add("retry");
+      feedbackMain.textContent = mainText;
+      feedbackSub.textContent = subText;
+    }
+
+    function getCurrentItem() {
+      return learningData[currentMode][currentCategory].items[currentIndex];
+    }
+
+    function getMasteryKey(idx = currentIndex) {
+      return `${currentMode}-${currentCategory}-${idx}`;
+    }
+
+    function updateStatsUI() {
+      starCountEl.textContent = savedState.stars;
+      streakCountEl.textContent = savedState.streak;
+      starCounterEl.classList.add("bump");
+      setTimeout(() => starCounterEl.classList.remove("bump"), 300);
+
+      const goal = 10;
+      const done = savedState.todaySuccess;
+      const pct = Math.min(100, (done / goal) * 100);
+      missionFill.style.width = pct + "%";
+      missionText.textContent = done >= goal
+        ? `🎉 오늘의 목표 달성! (${done}번 성공!)`
+        : `🎯 오늘의 목표: ${done} / ${goal}번 성공`;
+    }
+
+    function renderCategoryTabs() {
+      const cats = learningData[currentMode];
+      categoryTabs.innerHTML = "";
+      Object.keys(cats).forEach(catKey => {
+        const btn = document.createElement("button");
+        btn.className = "tab-btn" + (catKey === currentCategory ? " active" : "");
+        btn.textContent = cats[catKey].label;
+        btn.addEventListener("click", () => {
+          currentCategory = catKey;
+          currentIndex = 0;
+          renderCategoryTabs();
+          renderCard();
+          speakItem(0.92);
+        });
+        categoryTabs.appendChild(btn);
+      });
+    }
+
+    function renderDots() {
+      const list = learningData[currentMode][currentCategory].items;
+      progressDots.innerHTML = "";
+      list.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.className = "dot";
+        if (idx === currentIndex) dot.classList.add("active");
+        if ((savedState.mastery[getMasteryKey(idx)] || 0) >= 1) dot.classList.add("done");
+        progressDots.appendChild(dot);
+      });
+    }
+
+    function renderRepetitionHearts() {
+      const count = savedState.mastery[getMasteryKey()] || 0;
+      if (count >= 3) {
+        repBadge.innerHTML = `<span>👑 마스터 완료!</span>`;
+        repBadge.style.background = "#FFF9DB";
+        repBadge.style.borderColor = "#FFE66D";
+        repBadge.style.color = "#D98200";
+      } else {
+        repBadge.style.background = "#FFFFFF";
+        repBadge.style.borderColor = "#E2E8F0";
+        repBadge.style.color = "#57606F";
+        let heartsHtml = `<span>반복:</span>`;
+        for (let i = 0; i < 3; i++) {
+          heartsHtml += `<span class="rep-heart ${i < count ? "filled" : ""}">❤️</span>`;
+        }
+        repBadge.innerHTML = heartsHtml;
+      }
+    }
+
+    // 억양 곡선 SVG 렌더링
+    function renderIntonationCurve(type) {
+      if (type === "rise") {
+        intonationSvg.innerHTML = `
+          <path d="M 6 20 Q 42 18 68 5" fill="none" stroke="#845EC2" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="72,4 62,3 67,11" fill="#845EC2"/>
+        `;
+        intonationLabel.textContent = "끝을 올려서 물어요 ↗️";
+      } else if (type === "wave") {
+        intonationSvg.innerHTML = `
+          <path d="M 6 16 Q 26 4 42 14 T 70 10" fill="none" stroke="#4ECDC4" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="70" cy="10" r="3.5" fill="#4ECDC4"/>
+        `;
+        intonationLabel.textContent = "노래하듯 리듬감 있게 〰️";
+      } else {
+        intonationSvg.innerHTML = `
+          <path d="M 6 7 Q 40 7 68 20" fill="none" stroke="#FF6B6B" stroke-width="3.5" stroke-linecap="round"/>
+          <polygon points="72,22 67,14 62,21" fill="#FF6B6B"/>
+        `;
+        intonationLabel.textContent = "강세 후 끝을 내려요 ↘️";
+      }
+    }
+
+    function renderCard() {
+      const item = getCurrentItem();
+      emojiDisplay.textContent = item.emoji;
+      phonicsHint.textContent = `[ ${item.hint} ]`;
+      koreanMeaning.textContent = item.meaning;
+      wordCard.classList.remove("correct-glow");
+      btnNext.classList.remove("btn-next-highlight");
+
+      // 음절별 강세 블록 그리기
+      stressContainer.innerHTML = "";
+      item.syllables.forEach((syl, idx) => {
+        const box = document.createElement("div");
+        const isStressed = item.stress[idx] === 1;
+        box.className = "syllable-box" + (isStressed ? " stressed" : "");
+        box.innerHTML = `
+          <div class="stress-dot"></div>
+          <div>${syl}</div>
+        `;
+        // 개별 음절을 터치해도 강세 비트가 울리도록 설정
+        box.addEventListener("click", () => {
+          playTone(isStressed ? 587.33 : 329.63, 0.16, "sine", isStressed ? 0.35 : 0.15);
+          box.classList.add("active-beat");
+          setTimeout(() => box.classList.remove("active-beat"), 220);
+        });
+        stressContainer.appendChild(box);
+      });
+
+      renderIntonationCurve(item.intonation);
+      renderDots();
+      renderRepetitionHearts();
+
+      setFeedback(
+        "normal",
+        "👏 '리듬 박수'나 '들어보기'를 먼저 눌러 볼까요?",
+        "크고 빨간 글자 부분은 더 힘차게 발음해요!"
+      );
+    }
+
+    function goNextItem() {
+      const len = learningData[currentMode][currentCategory].items.length;
+      currentIndex = (currentIndex + 1) % len;
+      renderCard();
+      speakItem(0.92);
+    }
+
+    function goPrevItem() {
+      const len = learningData[currentMode][currentCategory].items.length;
+      currentIndex = (currentIndex - 1 + len) % len;
+      renderCard();
+      speakItem(0.92);
+    }
+
+    // 이벤트 연결
+    btnListen.addEventListener("click", () => speakItem(0.92));
+    btnSlow.addEventListener("click", () => speakItem(0.62));
+    btnRhythm.addEventListener("click", () => playRhythmGuide());
+    emojiDisplay.addEventListener("click", () => speakItem(0.92));
+
+    btnMic.addEventListener("click", () => {
+      if (!recognition) return;
+      window.speechSynthesis.cancel();
+      if (isListening) {
+        recognition.stop();
+      } else {
+        try {
+          recognition.start();
+        } catch (e) {
+          recognition.stop();
+        }
+      }
+    });
+
+    btnPrev.addEventListener("click", goPrevItem);
+    btnNext.addEventListener("click", goNextItem);
+
+    btnAutoLoop.addEventListener("click", () => {
+      autoLoop = !autoLoop;
+      btnAutoLoop.classList.toggle("on", autoLoop);
+      btnAutoLoop.textContent = autoLoop ? "🔁 연속연습 ON" : "🔁 연속연습 OFF";
+    });
+
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentMode = btn.dataset.mode;
+        currentCategory = Object.keys(learningData[currentMode])[0];
+        currentIndex = 0;
+        renderCategoryTabs();
+        renderCard();
+        speakItem(0.92);
+      });
+    });
+
+    // 초기화 실행
+    window.speechSynthesis.onvoiceschanged = () => {};
+    initSpeechRecognition();
+    updateStatsUI();
+    renderCategoryTabs();
+    renderCard();
+  </script>
+</body>
+</html>
